@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#0d3b4c">
+<title>Mi dia de hoy</title>
+<style>
+:root {
+  --ink: #1a2a32;
+  --petrol: #0d3b4c;
+  --petrol-light: #145c73;
+  --turquoise: #2a9d8f;
+  --turquoise-dark: #1f7a6f;
+  --orange: #e07a3d;
+  --orange-soft: #f4a261;
+  --bg: #eef2f5;
+  --card: #ffffff;
+  --muted: #5a6b75;
+  --border: #d5dee5;
+  --success: #2a9d8f;
+  --danger: #c45c5c;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  color: var(--ink);
+  padding: 14px;
+  line-height: 1.4;
+}
+.app { max-width: 720px; margin: 0 auto; }
+.top { padding: 18px 4px 12px; }
+.eyebrow { font-size: 13px; color: var(--muted); text-transform: capitalize; }
+h1 { font-size: 26px; margin: 6px 0 4px; color: var(--petrol); font-weight: 700; }
+h2 { font-size: 18px; margin: 0 0 14px; color: var(--petrol); font-weight: 700; }
+p { margin: 0; }
+.subtitle { color: var(--muted); font-size: 14px; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  margin: 12px 0;
+  box-shadow: 0 2px 10px rgba(13, 59, 76, 0.06);
+}
+
+.nav {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
+  margin: 10px 0 14px;
+}
+.nav button {
+  background: var(--card);
+  color: var(--ink);
+  padding: 12px 2px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.nav button.active {
+  background: var(--petrol);
+  color: #fff;
+  border-color: var(--petrol);
+}
+
+.pillrow { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.pill {
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  background: #e8f0f3;
+  color: var(--petrol);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+.pill.active { background: var(--petrol); color: #fff; }
+.pill.turquoise { background: #e0f4f1; color: var(--turquoise-dark); }
+.pill.turquoise.active { background: var(--turquoise); color: #fff; }
+.pill.orange { background: #fceee4; color: #b85c28; }
+.pill.orange.active { background: var(--orange); color: #fff; }
+
+button {
+  cursor: pointer;
+  border: 0;
+  border-radius: 10px;
+  padding: 11px 14px;
+  background: var(--petrol);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+}
+button.secondary {
+  background: #e8f0f3;
+  color: var(--petrol);
+}
+button.danger {
+  background: #fce8e8;
+  color: var(--danger);
+  padding: 8px 12px;
+  font-size: 13px;
+}
+button:active { opacity: 0.9; }
+
+input, select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font: inherit;
+  color: var(--ink);
+  background: #fff;
+  margin: 5px 0 12px;
+}
+label {
+  font-size: 13px;
+  font-weight: 700;
+  display: block;
+  color: var(--petrol);
+}
+
+.checkrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 2px;
+  border-bottom: 1px solid #eef2f5;
+}
+.checkrow:last-child { border-bottom: 0; }
+.checkrow input {
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  accent-color: var(--turquoise);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.checkrow .label { flex: 1; font-size: 15px; }
+.done .label {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+.small { font-size: 12px; color: var(--muted); }
+.row { display: flex; gap: 8px; align-items: center; }
+.row > * { flex: 1; }
+.row button { flex: 0 0 auto; }
+
+.task {
+  padding: 12px 0;
+  border-bottom: 1px solid #eef2f5;
+}
+.task:last-child { border-bottom: 0; }
+.taskhead {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.taskhead input {
+  width: 24px;
+  height: 24px;
+  margin: 2px 0 0;
+  accent-color: var(--turquoise);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.taskname { font-weight: 700; flex: 1; font-size: 15px; }
+
+.tag {
+  display: inline-block;
+  background: #e8f0f3;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 11px;
+  margin: 4px 3px 0 0;
+  color: var(--petrol);
+}
+
+.empty {
+  color: var(--muted);
+  font-size: 14px;
+  padding: 14px 0;
+  text-align: center;
+}
+
+.hidden { display: none !important; }
+
+.calendar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.calendar-head button { padding: 8px 14px; }
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  text-align: center;
+}
+.dayname {
+  font-size: 11px;
+  color: var(--muted);
+  padding: 6px 0;
+  font-weight: 600;
+}
+.day {
+  background: #f4f7f9;
+  color: var(--ink);
+  padding: 10px 0;
+  border-radius: 10px;
+  min-height: 40px;
+  font-weight: 600;
+  border: 0;
+  cursor: pointer;
+  font-size: 14px;
+}
+.day.selected {
+  background: var(--petrol);
+  color: white;
+}
+.day.today { outline: 2px solid var(--turquoise); }
+.day.has { position: relative; }
+.day.has:after {
+  content: "";
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--orange);
+  margin: 3px auto 0;
+}
+.day.selected.has:after { background: white; }
+
+.progress {
+  height: 10px;
+  background: #e0e8ed;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 10px 0 6px;
+}
+.progress span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--turquoise), var(--petrol-light));
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+.block-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--petrol);
+  margin: 0 0 8px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid #e0e8ed;
+}
+.routine-block {
+  margin-bottom: 18px;
+}
+.routine-block:last-child { margin-bottom: 0; }
+
+.exercise-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.exercise-btn {
+  background: #f4f7f9;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 12px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.4px;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.exercise-btn.selected {
+  background: var(--turquoise);
+  border-color: var(--turquoise);
+  color: white;
+}
+.exercise-btn:active { transform: scale(0.98); }
+
+.foot {
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 18px 0 8px;
+}
+
+.msg {
+  background: #e0f4f1;
+  color: var(--turquoise-dark);
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  margin-top: 10px;
+  display: none;
+}
+.msg.show { display: block; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="eyebrow" id="todayText"></div>
+    <h1>Mi dia de hoy</h1>
+    <div class="subtitle">Organiza tu dia, paso a paso.</div>
+  </header>
+
+  <div class="nav">
+    <button class="active" data-page="inicio">Inicio</button>
+    <button data-page="rutinas">Rutinas</button>
+    <button data-page="ejercicio">Ejercicio</button>
+    <button data-page="deberes">Deberes</button>
+    <button data-page="calendario">Calendario</button>
+  </div>
+
+  <!-- INICIO -->
+  <section id="inicio" class="page">
+    <div class="card">
+      <h2>Mi dia de hoy</h2>
+      <p id="summary" class="small"></p>
+      <div class="progress"><span id="progressBar"></span></div>
+      <p id="progressText" class="small"></p>
+    </div>
+
+    <div class="card">
+      <div class="routine-block">
+        <div class="block-title">Manana</div>
+        <div id="homeManana"></div>
+      </div>
+      <div class="routine-block">
+        <div class="block-title">Tarde</div>
+        <div id="homeTarde"></div>
+      </div>
+      <div class="routine-block">
+        <div class="block-title">Noche</div>
+        <div id="homeNoche"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Lo proximo</h2>
+      <div id="nextTasks"></div>
+      <button class="secondary" style="width:100%;margin-top:8px;" onclick="showPage('deberes')">Ver todos los deberes</button>
+    </div>
+
+    <div class="card">
+      <p class="small">No hace falta hacerlo todo. Marca a tu ritmo y celebra lo que consigas.</p>
+    </div>
+  </section>
+
+  <!-- RUTINAS -->
+  <section id="rutinas" class="page hidden">
+    <div class="card">
+      <h2>Mis rutinas</h2>
+      <div class="pillrow">
+        <button class="pill active" data-routine="manana" onclick="showRoutine('manana')">Manana</button>
+        <button class="pill" data-routine="tarde" onclick="showRoutine('tarde')">Tarde</button>
+        <button class="pill" data-routine="noche" onclick="showRoutine('noche')">Noche</button>
+      </div>
+      <p id="routineHint" class="small" style="margin-bottom:12px;"></p>
+      <div id="routineList"></div>
+    </div>
+
+    <div class="card" id="habitAddCard">
+      <h2>Anadir habito</h2>
+      <label>Rutina</label>
+      <select id="routineChoice">
+        <option value="manana">Manana</option>
+        <option value="tarde">Tarde</option>
+        <option value="noche">Noche</option>
+      </select>
+      <label>Nuevo habito</label>
+      <input id="habitInput" placeholder="Ej.: Preparar la botella de agua">
+      <button onclick="addHabit()" style="width:100%;">Anadir a la rutina</button>
+      <p class="small" style="margin-top:8px;">Las casillas se reinician cada dia. Los habitos que anadas se guardan.</p>
+    </div>
+  </section>
+
+  <!-- EJERCICIO -->
+  <section id="ejercicio" class="page hidden">
+    <div class="card">
+      <h2>Ejercicio</h2>
+      <p class="small" style="margin-bottom:14px;">Elige las actividades que quieras hacer hoy. Puedes marcar varias o ninguna. Se reinicia cada dia.</p>
+      <div id="exerciseList" class="exercise-grid"></div>
+    </div>
+  </section>
+
+  <!-- DEBERES -->
+  <section id="deberes" class="page hidden">
+    <div class="card">
+      <h2>Mis asignaturas</h2>
+      <div id="subjectList"></div>
+      <label>Nueva asignatura</label>
+      <div class="row">
+        <input id="subjectInput" placeholder="Ej.: Matematicas">
+        <button onclick="addSubject()">Anadir</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Anadir deber</h2>
+      <label>Que tienes que hacer?</label>
+      <input id="taskInput" placeholder="Ej.: Ejercicios 1, 2 y 3">
+      <label>Asignatura</label>
+      <select id="taskSubject"></select>
+      <label>Fecha de entrega</label>
+      <input id="taskDate" type="date">
+      <button onclick="addTask()" style="width:100%;">Guardar deber</button>
+    </div>
+
+    <div class="card">
+      <h2>Lista de deberes</h2>
+      <div class="pillrow">
+        <button class="pill" onclick="filterTasks('pendientes')">Pendientes</button>
+        <button class="pill" onclick="filterTasks('todos')">Todos</button>
+        <button class="pill" onclick="filterTasks('hechos')">Hechos</button>
+      </div>
+      <div id="taskList"></div>
+    </div>
+  </section>
+
+  <!-- CALENDARIO -->
+  <section id="calendario" class="page hidden">
+    <div class="card">
+      <h2>Calendario</h2>
+      <div class="calendar-head">
+        <button class="secondary" onclick="moveMonth(-1)">&#8249;</button>
+        <strong id="monthLabel"></strong>
+        <button class="secondary" onclick="moveMonth(1)">&#8250;</button>
+      </div>
+      <div id="calendarGrid" class="days"></div>
+    </div>
+    <div class="card">
+      <h2 id="selectedDateLabel">Lo que tienes ese dia</h2>
+      <div id="dayTasks"></div>
+      <button onclick="showPage('deberes')" style="width:100%;margin-top:8px;">Anadir un deber</button>
+    </div>
+  </section>
+
+  <div class="foot">Mi dia de hoy · Tus rutinas, a tu manera</div>
+</div>
+
+<script>
+(function(){
+  var today = new Date();
+  today.setHours(0,0,0,0);
+
+  function dateKey(d) {
+    return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+  }
+  function parseDate(s) {
+    var a = s.split('-');
+    return new Date(+a[0], +a[1] - 1, +a[2]);
+  }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function(c) {
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function load(k, def) {
+    try { return JSON.parse(localStorage.getItem(k)) || def; } catch(e) { return def; }
+  }
+
+  // Datos por defecto (sin emojis)
+  var subjects = load('mdh_subjects', ['Matematicas', 'Lengua', 'Ingles', 'Ciencias', 'Historia']);
+  var tasks = load('mdh_tasks', []);
+  var habits = load('mdh_habits', {
+    manana: ['Hacer la cama', 'Preparar la mochila', 'Cambiarme de ropa', 'Desayunar'],
+    tarde: ['Hacer los deberes', 'Dejar la habitacion ordenada', 'Apuntar los deberes'],
+    noche: ['Limpiarme los dientes', 'Ponerme la crema', 'Ponerme el pijama', 'Preparar la mochila para manana'],
+    ejercicio: ['ABDOMINALES', 'PLANCHA', 'COSTADOS DE DEFINICION']
+  });
+  // Forzar las opciones de ejercicio actuales (por si habia datos viejos guardados)
+  habits.ejercicio = ['ABDOMINALES', 'PLANCHA', 'COSTADOS DE DEFINICION'];
+  var checks = load('mdh_checks', {});
+  var activeRoutine = 'manana';
+  var activeFilter = 'pendientes';
+  var selectedDate = dateKey(today);
+  var monthView = new Date(today.getFullYear(), today.getMonth(), 1);
+
+  function save() {
+    localStorage.setItem('mdh_subjects', JSON.stringify(subjects));
+    localStorage.setItem('mdh_tasks', JSON.stringify(tasks));
+    localStorage.setItem('mdh_habits', JSON.stringify(habits));
+    localStorage.setItem('mdh_checks', JSON.stringify(checks));
+  }
+
+  function ensureDay() {
+    var k = dateKey(today);
+    if (!checks[k]) {
+      checks[k] = { manana: [], tarde: [], noche: [], ejercicio: [] };
+    }
+  }
+
+  // Navegacion
+  function showPage(p) {
+    document.querySelectorAll('.page').forEach(function(x) { x.classList.add('hidden'); });
+    document.getElementById(p).classList.remove('hidden');
+    document.querySelectorAll('.nav button').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.page === p);
+    });
+    if (p === 'calendario') renderCalendar();
+    if (p === 'deberes') renderTasks();
+    if (p === 'rutinas') renderRoutine();
+    if (p === 'ejercicio') renderExercisePage();
+    renderHome();
+  }
+  window.showPage = showPage;
+
+  document.querySelectorAll('.nav button').forEach(function(b) {
+    b.addEventListener('click', function() { showPage(b.dataset.page); });
+  });
+
+  // Rutinas
+  function showRoutine(r) {
+    activeRoutine = r;
+    document.querySelectorAll('.pill[data-routine]').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.routine === r);
+    });
+    document.getElementById('routineChoice').value = r;
+    renderRoutine();
+  }
+  window.showRoutine = showRoutine;
+
+  function renderRoutine() {
+    ensureDay();
+    var titles = {
+      manana: 'Por la manana',
+      tarde: 'Por la tarde',
+      noche: 'Por la noche'
+    };
+    var hints = {
+      manana: 'Prepararte para empezar el dia.',
+      tarde: 'Organizar deberes y espacio.',
+      noche: 'Cuidarte y dejar cosas listas para manana.'
+    };
+    document.getElementById('routineHint').textContent = titles[activeRoutine] + ' · ' + hints[activeRoutine];
+
+    var list = document.getElementById('routineList');
+    var arr = habits[activeRoutine] || [];
+    var done = checks[dateKey(today)][activeRoutine] || [];
+    list.innerHTML = '';
+
+    if (!arr.length) {
+      list.innerHTML = '<div class="empty">Todavia no hay habitos. Anade uno abajo.</div>';
+      return;
+    }
+
+    arr.forEach(function(h, i) {
+      var div = document.createElement('div');
+      div.className = 'checkrow' + (done.indexOf(i) >= 0 ? ' done' : '');
+      var cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = done.indexOf(i) >= 0;
+      cb.addEventListener('change', function() {
+        var a = checks[dateKey(today)][activeRoutine] || [];
+        if (cb.checked) {
+          if (a.indexOf(i) < 0) a.push(i);
+        } else {
+          a = a.filter(function(n) { return n !== i; });
+        }
+        checks[dateKey(today)][activeRoutine] = a;
+        save();
+        renderRoutine();
+        renderHome();
+      });
+      var span = document.createElement('span');
+      span.className = 'label';
+      span.textContent = h;
+      var del = document.createElement('button');
+      del.className = 'danger';
+      del.textContent = 'Eliminar';
+      del.addEventListener('click', function() {
+        if (confirm('Eliminar este habito de la rutina?')) {
+          habits[activeRoutine].splice(i, 1);
+          checks[dateKey(today)][activeRoutine] = (checks[dateKey(today)][activeRoutine] || [])
+            .filter(function(n) { return n !== i; })
+            .map(function(n) { return n > i ? n - 1 : n; });
+          save();
+          renderRoutine();
+          renderHome();
+        }
+      });
+      div.appendChild(cb);
+      div.appendChild(span);
+      div.appendChild(del);
+      list.appendChild(div);
+    });
+  }
+
+  function renderExercisePage() {
+    ensureDay();
+    var container = document.getElementById('exerciseList');
+    var arr = habits.ejercicio || [];
+    var done = checks[dateKey(today)].ejercicio || [];
+    container.innerHTML = '';
+    container.className = 'exercise-grid';
+
+    arr.forEach(function(h, i) {
+      var btn = document.createElement('button');
+      btn.className = 'exercise-btn' + (done.indexOf(i) >= 0 ? ' selected' : '');
+      btn.textContent = h;
+      btn.addEventListener('click', function() {
+        var a = checks[dateKey(today)].ejercicio || [];
+        var idx = a.indexOf(i);
+        if (idx >= 0) a.splice(idx, 1);
+        else a.push(i);
+        checks[dateKey(today)].ejercicio = a;
+        save();
+        renderExercisePage();
+        renderHome();
+      });
+      container.appendChild(btn);
+    });
+  }
+
+  function addHabit() {
+    var text = document.getElementById('habitInput').value.trim();
+    var r = document.getElementById('routineChoice').value;
+    if (!text) return;
+    if (!habits[r]) habits[r] = [];
+    habits[r].push(text);
+    document.getElementById('habitInput').value = '';
+    save();
+    showRoutine(r);
+    renderHome();
+  }
+  window.addHabit = addHabit;
+
+  // Asignaturas
+  function addSubject() {
+    var input = document.getElementById('subjectInput');
+    var s = input.value.trim();
+    if (!s) return;
+    if (subjects.indexOf(s) >= 0) {
+      alert('Esa asignatura ya esta en la lista.');
+      return;
+    }
+    subjects.push(s);
+    input.value = '';
+    save();
+    renderSubjects();
+    renderTasks();
+  }
+  window.addSubject = addSubject;
+
+  function renderSubjects() {
+    var list = document.getElementById('subjectList');
+    list.innerHTML = '';
+    if (!subjects.length) {
+      list.innerHTML = '<p class="empty">Anade tu primera asignatura.</p>';
+    }
+    subjects.forEach(function(s, i) {
+      var row = document.createElement('div');
+      row.className = 'checkrow';
+      var name = document.createElement('span');
+      name.className = 'label';
+      name.textContent = s;
+      var del = document.createElement('button');
+      del.className = 'danger';
+      del.textContent = 'Eliminar';
+      del.addEventListener('click', function() {
+        if (confirm('Eliminar ' + s + ' de las asignaturas?')) {
+          subjects.splice(i, 1);
+          save();
+          renderSubjects();
+          renderTasks();
+        }
+      });
+      row.appendChild(name);
+      row.appendChild(del);
+      list.appendChild(row);
+    });
+
+    var sel = document.getElementById('taskSubject');
+    sel.innerHTML = '';
+    if (!subjects.length) {
+      var o = document.createElement('option');
+      o.value = '';
+      o.textContent = 'Primero anade una asignatura';
+      sel.appendChild(o);
+    } else {
+      subjects.forEach(function(s) {
+        var o = document.createElement('option');
+        o.value = s;
+        o.textContent = s;
+        sel.appendChild(o);
+      });
+    }
+  }
+
+  // Deberes
+  function addTask() {
+    var name = document.getElementById('taskInput').value.trim();
+    var sub = document.getElementById('taskSubject').value;
+    var d = document.getElementById('taskDate').value;
+    if (!name) {
+      alert('Escribe que deber tienes que hacer.');
+      return;
+    }
+    tasks.push({
+      id: Date.now() + '_' + Math.random(),
+      name: name,
+      subject: sub || 'Sin asignatura',
+      date: d || dateKey(today),
+      done: false
+    });
+    document.getElementById('taskInput').value = '';
+    save();
+    renderTasks();
+    renderCalendar();
+    renderHome();
+  }
+  window.addTask = addTask;
+
+  function filterTasks(f) {
+    activeFilter = f;
+    renderTasks();
+  }
+  window.filterTasks = filterTasks;
+
+  function renderTasks() {
+    renderSubjects();
+    var list = document.getElementById('taskList');
+    list.innerHTML = '';
+    var arr = tasks
+      .filter(function(t) {
+        return activeFilter === 'todos' || (activeFilter === 'hechos' ? t.done : !t.done);
+      })
+      .sort(function(a, b) { return a.date.localeCompare(b.date); });
+
+    if (!arr.length) {
+      list.innerHTML = '<div class="empty">No hay deberes en esta lista. Puedes anadir uno arriba.</div>';
+      return;
+    }
+
+    arr.forEach(function(t) {
+      var row = document.createElement('div');
+      row.className = 'task';
+      var head = document.createElement('div');
+      head.className = 'taskhead';
+      var cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = t.done;
+      cb.addEventListener('change', function() {
+        t.done = cb.checked;
+        save();
+        renderTasks();
+        renderCalendar();
+        renderHome();
+      });
+      var info = document.createElement('div');
+      info.className = 'taskname';
+      info.textContent = t.name;
+      if (t.done) info.style.textDecoration = 'line-through';
+      var del = document.createElement('button');
+      del.className = 'danger';
+      del.textContent = 'Eliminar';
+      del.addEventListener('click', function() {
+        if (confirm('Eliminar este deber?')) {
+          tasks = tasks.filter(function(x) { return x.id !== t.id; });
+          save();
+          renderTasks();
+          renderCalendar();
+          renderHome();
+        }
+      });
+      head.appendChild(cb);
+      head.appendChild(info);
+      head.appendChild(del);
+      var meta = document.createElement('div');
+      meta.className = 'small';
+      meta.textContent = t.subject + ' · ' + (t.date ? parseDate(t.date).toLocaleDateString('es-ES') : 'Sin fecha');
+      row.appendChild(head);
+      row.appendChild(meta);
+      list.appendChild(row);
+    });
+  }
+
+  // Calendario
+  function moveMonth(n) {
+    monthView.setMonth(monthView.getMonth() + n);
+    renderCalendar();
+  }
+  window.moveMonth = moveMonth;
+
+  function renderCalendar() {
+    var y = monthView.getFullYear();
+    var m = monthView.getMonth();
+    document.getElementById('monthLabel').textContent = monthView.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+    var grid = document.getElementById('calendarGrid');
+    grid.innerHTML = '';
+
+    ['L', 'M', 'X', 'J', 'V', 'S', 'D'].forEach(function(x) {
+      var d = document.createElement('div');
+      d.className = 'dayname';
+      d.textContent = x;
+      grid.appendChild(d);
+    });
+
+    var first = (new Date(y, m, 1).getDay() + 6) % 7;
+    var days = new Date(y, m + 1, 0).getDate();
+    for (var i = 0; i < first; i++) {
+      grid.appendChild(document.createElement('div'));
+    }
+    for (var day = 1; day <= days; day++) {
+      var date = new Date(y, m, day);
+      var key = dateKey(date);
+      var b = document.createElement('button');
+      b.className = 'day';
+      b.textContent = day;
+      if (key === selectedDate) b.classList.add('selected');
+      if (key === dateKey(today)) b.classList.add('today');
+      if (tasks.some(function(t) { return t.date === key; })) b.classList.add('has');
+      b.addEventListener('click', (function(k) {
+        return function() {
+          selectedDate = k;
+          renderCalendar();
+        };
+      })(key));
+      grid.appendChild(b);
+    }
+
+    var sd = parseDate(selectedDate);
+    document.getElementById('selectedDateLabel').textContent = 'Lo que tienes el ' + sd.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
+    var list = document.getElementById('dayTasks');
+    var arr = tasks.filter(function(t) { return t.date === selectedDate; });
+    list.innerHTML = '';
+    if (!arr.length) {
+      list.innerHTML = '<div class="empty">No has apuntado deberes para este dia.</div>';
+    } else {
+      arr.forEach(function(t) {
+        var p = document.createElement('div');
+        p.className = 'task';
+        p.textContent = (t.done ? '[Hecho] ' : '[Pendiente] ') + t.name + ' · ' + t.subject;
+        list.appendChild(p);
+      });
+    }
+  }
+
+  // Inicio (home)
+  function renderHomeChecks(containerId, routineKey) {
+    ensureDay();
+    var container = document.getElementById(containerId);
+    var arr = habits[routineKey] || [];
+    var done = checks[dateKey(today)][routineKey] || [];
+    container.innerHTML = '';
+
+    arr.forEach(function(h, i) {
+      var div = document.createElement('div');
+      div.className = 'checkrow' + (done.indexOf(i) >= 0 ? ' done' : '');
+      var cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = done.indexOf(i) >= 0;
+      cb.addEventListener('change', function() {
+        var a = checks[dateKey(today)][routineKey] || [];
+        if (cb.checked) {
+          if (a.indexOf(i) < 0) a.push(i);
+        } else {
+          a = a.filter(function(n) { return n !== i; });
+        }
+        checks[dateKey(today)][routineKey] = a;
+        save();
+        renderHome();
+        if (document.getElementById('rutinas') && !document.getElementById('rutinas').classList.contains('hidden')) {
+          renderRoutine();
+        }
+      });
+      var span = document.createElement('span');
+      span.className = 'label';
+      span.textContent = h;
+      div.appendChild(cb);
+      div.appendChild(span);
+      container.appendChild(div);
+    });
+  }
+
+  function renderHome() {
+    ensureDay();
+    renderHomeChecks('homeManana', 'manana');
+    renderHomeChecks('homeTarde', 'tarde');
+    renderHomeChecks('homeNoche', 'noche');
+
+    var total = 0, done = 0;
+    ['manana', 'tarde', 'noche'].forEach(function(r) {
+      total += (habits[r] || []).length;
+      done += (checks[dateKey(today)][r] || []).length;
+    });
+    // Incluir ejercicio en el progreso
+    total += (habits.ejercicio || []).length;
+    done += (checks[dateKey(today)].ejercicio || []).length;
+
+    var tasksDone = tasks.filter(function(t) { return t.done; }).length;
+    document.getElementById('summary').textContent =
+      'Rutinas: ' + done + ' de ' + total + ' · Deberes: ' + tasksDone + ' de ' + tasks.length;
+    document.getElementById('progressBar').style.width = (total ? Math.round(done / total * 100) : 0) + '%';
+    document.getElementById('progressText').textContent =
+      total ? Math.round(done / total * 100) + '% de tus habitos de hoy completados' : 'Anade habitos para ver tu progreso.';
+
+    var list = document.getElementById('nextTasks');
+    var arr = tasks
+      .filter(function(t) { return !t.done; })
+      .sort(function(a, b) { return a.date.localeCompare(b.date); })
+      .slice(0, 4);
+    list.innerHTML = '';
+    if (!arr.length) {
+      list.innerHTML = '<div class="empty">No tienes deberes pendientes apuntados.</div>';
+    } else {
+      arr.forEach(function(t) {
+        var d = document.createElement('div');
+        d.className = 'task';
+        d.innerHTML = '<strong>' + esc(t.name) + '</strong><div class="small">' +
+          esc(t.subject) + ' · ' + (t.date ? parseDate(t.date).toLocaleDateString('es-ES') : 'Sin fecha') + '</div>';
+        list.appendChild(d);
+      });
+    }
+  }
+
+  // Inicio
+  document.getElementById('todayText').textContent =
+    today.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  document.getElementById('taskDate').value = dateKey(today);
+
+  ensureDay();
+  renderSubjects();
+  renderRoutine();
+  renderTasks();
+  renderCalendar();
+  renderHome();
+})();
+</script>
+</body>
+</html>
